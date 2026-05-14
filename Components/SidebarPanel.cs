@@ -15,7 +15,7 @@ public sealed class SidebarPanel : SurfacePanel
 
         _titleLabel = new Label
         {
-            Text = "Logs em tempo real",
+            Text = "Logs",
             Dock = DockStyle.Top,
             Height = 30,
             Font = UiFonts.Title(13f),

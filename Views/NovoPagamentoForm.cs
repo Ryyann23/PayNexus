@@ -9,6 +9,10 @@ public sealed class NovoPagamentoForm : Form
     private readonly NumericUpDown _valorInput;
     private readonly ComboBox _metodoComboBox;
     private readonly Label _errorLabel;
+    private SurfacePanel _shell = null!;
+    private ModernButton _confirmButton = null!;
+    private ModernButton _cancelButton = null!;
+    private bool _animationRunning;
     private bool _dragging;
     private Point _dragStart;
 
@@ -58,7 +62,7 @@ public sealed class NovoPagamentoForm : Form
 
     private void BuildLayout()
     {
-        var shell = new SurfacePanel
+        _shell = new SurfacePanel
         {
             Dock = DockStyle.Fill,
             Padding = new Padding(30, 26, 38, 38),
@@ -97,8 +101,8 @@ public sealed class NovoPagamentoForm : Form
         layout.Controls.Add(_errorLabel, 0, 7);
         layout.Controls.Add(CreateActions(), 0, 9);
 
-        shell.Controls.Add(layout);
-        Controls.Add(shell);
+        _shell.Controls.Add(layout);
+        Controls.Add(_shell);
     }
 
     private Control CreateHeader()
@@ -169,7 +173,7 @@ public sealed class NovoPagamentoForm : Form
             BackColor = Color.Transparent
         };
 
-        var confirmButton = new ModernButton
+        _confirmButton = new ModernButton
         {
             Text = "Processar Pagamento",
             Width = 178,
@@ -180,7 +184,7 @@ public sealed class NovoPagamentoForm : Form
             Margin = new Padding(10, 0, 0, 0)
         };
 
-        var cancelButton = new ModernButton
+        _cancelButton = new ModernButton
         {
             Text = "Cancelar",
             Width = 112,
@@ -193,18 +197,18 @@ public sealed class NovoPagamentoForm : Form
             Margin = new Padding(10, 0, 0, 0)
         };
 
-        confirmButton.Click += (_, _) => ConfirmPayment();
-        cancelButton.Click += (_, _) =>
+        _confirmButton.Click += (_, _) => ConfirmPayment();
+        _cancelButton.Click += (_, _) =>
         {
             DialogResult = DialogResult.Cancel;
             Close();
         };
 
-        AcceptButton = confirmButton;
-        CancelButton = cancelButton;
+        AcceptButton = _confirmButton;
+        CancelButton = _cancelButton;
 
-        actions.Controls.Add(confirmButton);
-        actions.Controls.Add(cancelButton);
+        actions.Controls.Add(_confirmButton);
+        actions.Controls.Add(_cancelButton);
 
         return actions;
     }
@@ -304,6 +308,11 @@ public sealed class NovoPagamentoForm : Form
 
     private void ConfirmPayment()
     {
+        if (_animationRunning)
+        {
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(ClienteNome))
         {
             _errorLabel.Text = "Informe o nome do cliente para continuar.";
@@ -319,8 +328,35 @@ public sealed class NovoPagamentoForm : Form
         }
 
         _errorLabel.Text = string.Empty;
-        DialogResult = DialogResult.OK;
-        Close();
+        StartPaymentAnimation();
+    }
+
+    private void StartPaymentAnimation()
+    {
+        _animationRunning = true;
+        _clienteTextBox.Enabled = false;
+        _valorInput.Enabled = false;
+        _metodoComboBox.Enabled = false;
+        _confirmButton.Enabled = false;
+        _cancelButton.Enabled = false;
+        AcceptButton = null;
+        CancelButton = null;
+
+        var animationView = new PaymentAnimationView
+        {
+            Dock = DockStyle.Fill,
+            Margin = new Padding(0)
+        };
+
+        animationView.AnimationCompleted += (_, _) =>
+        {
+            DialogResult = DialogResult.OK;
+            Close();
+        };
+
+        _shell.Controls.Add(animationView);
+        animationView.BringToFront();
+        animationView.Start(MetodoPagamento);
     }
 
     private void EnableDrag(Control control)
