@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayNexus", "PayNexus.csproj", "{03A1CB51-F739-28C0-05B3-92182998E003}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{03A1CB51-F739-28C0-05B3-92182998E003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03A1CB51-F739-28C0-05B3-92182998E003}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03A1CB51-F739-28C0-05B3-92182998E003}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03A1CB51-F739-28C0-05B3-92182998E003}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {77379504-DED4-45F8-86B1-F5A2C6B75698}
+	EndGlobalSection
+EndGlobal
