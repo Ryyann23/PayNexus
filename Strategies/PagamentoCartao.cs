@@ -1,25 +1,27 @@
 using PayNexus.Models;
-using PayNexus.Utils;
+using PayNexus.Adapters;
 
 namespace PayNexus.Strategies;
 
 public sealed class PagamentoCartao : IEstrategiaPagamento
 {
+    private readonly IGatewayPagamentoAdapter _gatewayAdapter;
+
+    public PagamentoCartao()
+        : this(new CartaoGatewayAdapter())
+    {
+    }
+
+    public PagamentoCartao(IGatewayPagamentoAdapter gatewayAdapter)
+    {
+        _gatewayAdapter = gatewayAdapter ?? throw new ArgumentNullException(nameof(gatewayAdapter));
+    }
+
     public string Metodo => "Cartão de Crédito";
 
     public ResultadoPagamento Processar(Pagamento pagamento)
     {
-        if (pagamento.Valor > 10000)
-        {
-            return new ResultadoPagamento(
-                StatusPagamento.Recusado,
-                "Pagamento no cartão recusado pela validação antifraude simulada.",
-                TransactionCodeGenerator.Generate("CRD"));
-        }
-
-        return new ResultadoPagamento(
-            StatusPagamento.Aprovado,
-            "Pagamento no cartão aprovado após validação simulada.",
-            TransactionCodeGenerator.Generate("CRD"));
+        pagamento.AdicionarEvento($"Strategy Cartao direcionou o pagamento para o adapter {_gatewayAdapter.NomeGateway}.");
+        return _gatewayAdapter.Processar(pagamento);
     }
 }
